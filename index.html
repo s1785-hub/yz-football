@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YZ足球球员数据中心</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚽</text></svg>">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background: #0a1628;
+            color: #e8eef5;
+            min-height: 100vh;
+        }
+
+        /* yz Logo 徽章 */
+        .yz-badge {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #00d97e, #00b86a);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 800;
+            color: #0a1628;
+            z-index: 999;
+            box-shadow: 0 4px 20px rgba(0,217,126,0.4);
+        }
+
+        /* Hero */
+        .hero {
+            position: relative;
+            height: 260px;
+            background: url('assets/stadium.jpg') center/cover no-repeat;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(10,22,40,0.3) 0%, rgba(10,22,40,0.95) 100%);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+
+        .hero-title {
+            font-size: 36px;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .hero-subtitle {
+            font-size: 16px;
+            color: #9fb3c8;
+        }
+
+        /* 搜索栏 */
+        .search-container {
+            position: relative;
+            z-index: 2;
+            max-width: 1100px;
+            margin: -30px auto 0;
+            padding: 0 20px;
+        }
+
+        .search-bar {
+            background: rgba(19, 39, 64, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            gap: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 12px 16px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: #00d97e;
+        }
+
+        .search-btn {
+            padding: 12px 28px;
+            background: linear-gradient(135deg, #00d97e, #00b86a);
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .search-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* 状态提示 */
+        .status-msg {
+            max-width: 1100px;
+            margin: 20px auto;
+            padding: 0 20px;
+            text-align: center;
+            color: #9fb3c8;
+        }
+
+        .loading { color: #00d97e; }
+        .error { color: #ff6b6b; }
+
+        /* 球员列表 */
+        .results-list {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        .result-item {
+            background: rgba(19, 39, 64, 0.8);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .result-item:hover {
+            border-color: rgba(0,217,126,0.4);
+            transform: translateX(4px);
+        }
+
+        .result-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .result-name {
+            font-size: 18px;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .result-sub {
+            font-size: 14px;
+            color: #7a8fa6;
+            margin-top: 2px;
+        }
+
+        /* 球员详情 */
+        .player-detail {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .player-card-main {
+            background: linear-gradient(145deg, #132740, #0f2035);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .player-header {
+            display: flex;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        .player-photo {
+            width: 120px;
+            height: 120px;
+            border-radius: 16px;
+            object-fit: cover;
+            border: 3px solid rgba(0,217,126,0.3);
+        }
+
+        .player-info h2 {
+            font-size: 28px;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .player-info .club {
+            font-size: 18px;
+            color: #00d97e;
+            margin-bottom: 12px;
+        }
+
+        .player-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .meta-tag {
+            background: rgba(255,255,255,0.08);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: #9fb3c8;
+        }
+
+        .meta-tag strong {
+            color: #fff;
+        }
+
+        /* 统计数据 */
+        .stats-section {
+            padding: 30px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .stats-title {
+            font-size: 18px;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 16px;
+        }
+
+        .stat-item {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: #00d97e;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #7a8fa6;
+            margin-top: 4px;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: #4a5d75;
+            font-size: 14px;
+            margin-top: 40px;
+        }
+
+        footer .yz {
+            font-size: 18px;
+            font-weight: 700;
+            color: #00d97e;
+            margin-bottom: 8px;
+        }
+
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            .hero { height: 200px; }
+            .hero-title { font-size: 26px; }
+            .search-bar { flex-direction: column; }
+            .search-btn { width: 100%; }
+            .player-header { flex-direction: column; align-items: center; text-align: center; }
+            .player-meta { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- yz 徽章 -->
+    <div class="yz-badge">yz</div>
+
+    <!-- Hero -->
+    <div class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">YZ 足球球员数据中心</h1>
+            <p class="hero-subtitle">查询全球顶级联赛球员数据 · 身价 · 进球 · 助攻</p>
+        </div>
+    </div>
+
+    <!-- 搜索栏 -->
+    <div class="search-container">
+        <div class="search-bar">
+            <input type="text" class="search-input" id="searchInput" placeholder="输入球员名字搜索...">
+            <button class="search-btn" id="searchBtn" onclick="searchPlayer()">搜索</button>
+        </div>
+    </div>
+
+    <!-- 状态提示 -->
+    <div class="status-msg" id="statusMsg"></div>
+
+    <!-- 搜索结果 -->
+    <div class="results-list" id="resultsList"></div>
+
+    <!-- 球员详情 -->
+    <div class="player-detail" id="playerDetail"></div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="yz">yz</div>
+        <p>足球球员数据中心 · 个人作品</p>
+    </footer>
+
+    <script>
+        // 内置兜底球员
+        const fallbackPlayers = [
+            { player_id: 1, name_zh: '哈兰德', nationality: '挪威', age: 25, photo: 'assets/haaland.jpg', club: '曼城', league: '英超', goals: 28, assists: 6, value: '1.8亿欧', position: '前锋' },
+            { player_id: 2, name_zh: '姆巴佩', nationality: '法国', age: 26, photo: 'assets/mbappe.jpg', club: '皇马', league: '西甲', goals: 25, assists: 5, value: '1.6亿欧', position: '前锋' },
+            { player_id: 3, name_zh: '贝林厄姆', nationality: '英格兰', age: 21, photo: 'assets/bellingham.jpg', club: '皇马', league: '西甲', goals: 18, assists: 7, value: '1.4亿欧', position: '中场' },
+            { player_id: 4, name_zh: '凯恩', nationality: '英格兰', age: 31, photo: 'assets/kane.jpg', club: '拜仁', league: '德甲', goals: 22, assists: 5, value: '7500万欧', position: '前锋' },
+            { player_id: 5, name_zh: '劳塔罗', nationality: '阿根廷', age: 27, photo: 'assets/lautaro.jpg', club: '国米', league: '意甲', goals: 20, assists: 4, value: '8000万欧', position: '前锋' }
+        ];
+
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const statusMsg = document.getElementById('statusMsg');
+        const resultsList = document.getElementById('resultsList');
+        const playerDetail = document.getElementById('playerDetail');
+
+        // 回车搜索
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') searchPlayer();
+        });
+
+        // 页面加载显示全部球员
+        window.onload = function() {
+            showStatus('热门球员（内置数据）', '');
+            renderFallbackList(fallbackPlayers);
+        };
+
+        function showStatus(msg, type) {
+            statusMsg.innerHTML = msg ? `<p class="${type}">${msg}</p>` : '';
+        }
+
+        function setLoading(loading) {
+            searchBtn.disabled = loading;
+            searchBtn.textContent = loading ? '加载中...' : '搜索';
+        }
+
+        function renderFallbackList(players) {
+            playerDetail.innerHTML = '';
+            resultsList.innerHTML = players.map(p => `
+                <div class="result-item" onclick="showFallbackDetail(${p.player_id})">
+                    <img class="result-avatar" src="${p.photo}" alt="${p.name_zh}" onerror="this.style.display='none'">
+                    <div>
+                        <div class="result-name">${p.name_zh}</div>
+                        <div class="result-sub">${p.club} · ${p.league} · ${p.nationality}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showFallbackDetail(id) {
+            const p = fallbackPlayers.find(x => x.player_id === id);
+            if (!p) return;
+
+            playerDetail.innerHTML = `
+                <div class="player-card-main">
+                    <div class="player-header">
+                        <img class="player-photo" src="${p.photo}" alt="${p.name_zh}">
+                        <div class="player-info">
+                            <h2>${p.name_zh}</h2>
+                            <div class="club">${p.club} · ${p.league}</div>
+                            <div class="player-meta">
+                                <span class="meta-tag">国籍: <strong>${p.nationality}</strong></span>
+                                <span class="meta-tag">年龄: <strong>${p.age}岁</strong></span>
+                                <span class="meta-tag">位置: <strong>${p.position}</strong></span>
+                                <span class="meta-tag">身价: <strong>${p.value}</strong></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stats-section">
+                        <div class="stats-title">赛季数据（示例）</div>
+                        <div class="stats-grid">
+                            <div class="stat-item"><div class="stat-value">${p.goals}</div><div class="stat-label">进球</div></div>
+                            <div class="stat-item"><div class="stat-value">${p.assists}</div><div class="stat-label">助攻</div></div>
+                            <div class="stat-item"><div class="stat-value">${p.goals + p.assists}</div><div class="stat-label">参与进球</div></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            resultsList.innerHTML = '';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        async function searchPlayer() {
+            const keyword = searchInput.value.trim().toLowerCase();
+            if (!keyword) {
+                renderFallbackList(fallbackPlayers);
+                showStatus('热门球员（内置数据）', '');
+                return;
+            }
+
+            // 先本地搜索
+            const localResults = fallbackPlayers.filter(p => 
+                p.name_zh.toLowerCase().includes(keyword) || 
+                p.club.toLowerCase().includes(keyword)
+            );
+
+            if (localResults.length > 0) {
+                showStatus(`找到 ${localResults.length} 名匹配球员`, '');
+                renderFallbackList(localResults);
+                playerDetail.innerHTML = '';
+                return;
+            }
+
+            // 本地没找到，走Netlify代理
+            setLoading(true);
+            showStatus('联网搜索中...', 'loading');
+            resultsList.innerHTML = '';
+            playerDetail.innerHTML = '';
+
+            try {
+                const response = await fetch(`/.netlify/functions/proxy-football?q=${encodeURIComponent(keyword)}`);
+                const data = await response.json();
+
+                if (data.success && data.data && data.data.length > 0) {
+                    showStatus(`联网找到 ${data.data.length} 名球员！点击查看详情`, '');
+                    renderApiResults(data.data);
+                } else {
+                    showStatus('没有找到相关球员', 'error');
+                }
+            } catch (error) {
+                console.error('搜索出错:', error);
+                showStatus('联网搜索暂不可用（请确认Netlify函数已部署）。目前支持搜索内置球员', 'error');
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        function renderApiResults(players) {
+            resultsList.innerHTML = players.map(p => `
+                <div class="result-item">
+                    <img class="result-avatar" src="${p.photo}" alt="${p.name_zh}" onerror="this.style.display='none'">
+                    <div>
+                        <div class="result-name">${p.name_zh || p.name}</div>
+                        <div class="result-sub">${p.nationality} · ${p.age}岁</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+    </script>
+
+</body>
+</html>
