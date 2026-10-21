@@ -297,49 +297,29 @@
             `).join("");
         }
 
-        async function searchPlayer() {
-            const kw = input.value.trim();
+        function searchPlayer() {
+            const kw = input.value.trim().toLowerCase();
             if (!kw) {
                 tip.innerText = "清空输入框自动恢复全部球员";
                 renderLocal(defaultPlayers);
                 return;
             }
-
-            // 先本地匹配
-            const localResult = defaultPlayers.filter(p => 
-                p.name.toLowerCase().includes(kw.toLowerCase())
+            const result = defaultPlayers.filter(p => 
+                p.name.toLowerCase().includes(kw) || 
+                p.club.toLowerCase().includes(kw)
             );
-            if (localResult.length > 0) {
-                tip.innerText = `本地找到 ${localResult.length} 位球员`;
-                renderLocal(localResult);
-                return;
+            if (result.length > 0) {
+                tip.innerText = `找到 ${result.length} 位球员`;
+            } else {
+                tip.innerText = "❌ 没有找到该球员";
             }
-
-            // 本地没找到，走联网API
-            tip.innerText = "🔍 联网搜索中...";
-            btn.disabled = true;
-            btn.textContent = "搜索中...";
-
-            try {
-                const res = await fetch(`/.netlify/functions/proxy-football?q=${encodeURIComponent(kw)}`);
-                const data = await res.json();
-                if (data.success && data.data && data.data.length > 0) {
-                    renderApiResults(data.data);
-                } else {
-                    tip.innerText = "❌ 没有搜到该球员";
-                    container.innerHTML = "";
-                }
-            } catch (err) {
-                tip.innerText = "⚠️ 联网搜索暂不可用（代理函数未部署），目前支持搜索本地热门球员";
-                console.error(err);
-            } finally {
-                btn.disabled = false;
-                btn.textContent = "搜索";
-            }
+            renderLocal(result);
         }
 
         btn.onclick = searchPlayer;
-        input.onkeydown = (e) => e.key === "Enter" && searchPlayer();
+        input.onkeydown = (e) => {
+            if (e.key === "Enter") searchPlayer();
+        };
         input.oninput = () => {
             if (input.value.trim() === "") {
                 tip.innerText = "清空输入框自动恢复全部球员";
