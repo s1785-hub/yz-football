@@ -3,197 +3,277 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YZ 足球球员数据库</title>
+    <title>YZ 足球球员查询系统</title>
     <style>
-        * { margin:0; padding:0; box-sizing:border-box; font-family:system-ui,sans-serif; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
         body {
-            background: linear-gradient(rgba(10,25,60,0.85), rgba(10,25,60,0.95)), url('assets/bg-stadium.jpg') center/cover fixed no-repeat;
-            color:#e8f0ff; min-height:100vh;
+            background: linear-gradient(rgba(10, 25, 55, 0.88), rgba(10, 25, 55, 0.92)),
+                        url("assets/stadium-bg.jpg") center/cover no-repeat fixed;
+            color: #fff;
+            padding: 28px 16px;
+            min-height: 100vh;
         }
         .yz-badge {
-            position:fixed; top:20px; right:20px; width:50px; height:50px;
-            background:linear-gradient(135deg,#3b82f6,#1d4ed8); border-radius:12px;
-            display:flex; align-items:center; justify-content:center;
-            font-size:20px; font-weight:800; color:#fff; z-index:999;
-            box-shadow:0 4px 20px rgba(59,130,246,0.5);
+            position: fixed;
+            top: 18px;
+            right: 18px;
+            background: #2563eb;
+            color: #fff;
+            font-weight: 800;
+            padding: 7px 14px;
+            border-radius: 999px;
+            box-shadow: 0 0 14px rgba(37, 99, 235, 0.5);
+            z-index: 99;
         }
-        .hero { text-align:center; padding:70px 20px 40px; }
-        .hero h1 {
-            font-size:44px; font-weight:800; margin-bottom:12px;
-            background:linear-gradient(90deg,#60a5fa,#3b82f6,#93c5fd);
-            -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+        .header {
+            text-align: center;
+            margin-bottom: 36px;
         }
-        .hero p { font-size:18px; color:#93c5fd; }
-        .search-wrapper { max-width:600px; margin:0 auto 20px; padding:0 20px; }
+        .header h1 {
+            font-size: 34px;
+            background: linear-gradient(90deg, #60a5fa, #93c5fd);
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 8px;
+        }
+        .header p {
+            opacity: 0.75;
+            font-size: 16px;
+        }
         .search-box {
-            display:flex; gap:12px; background:rgba(30,58,138,0.4);
-            border:1px solid rgba(96,165,250,0.3); border-radius:16px; padding:8px; backdrop-filter:blur(10px);
+            max-width: 620px;
+            margin: 0 auto 20px;
+            display: flex;
+            gap: 10px;
         }
         #search-input {
-            flex:1; padding:14px 16px; border:none; background:transparent;
-            color:#fff; font-size:16px; outline:none;
+            flex: 1;
+            padding: 14px 18px;
+            border-radius: 12px;
+            border: 1px solid rgba(147, 197, 253, 0.3);
+            font-size: 17px;
+            background: rgba(30, 41, 59, 0.7);
+            color: #fff;
+            outline: none;
+            backdrop-filter: blur(8px);
         }
-        #search-input::placeholder { color:#64748b; }
+        #search-input:focus {
+            box-shadow: 0 0 0 2px #3b82f6;
+            border-color: #3b82f6;
+        }
         #search-btn {
-            padding:14px 28px; border:none; border-radius:12px;
-            background:linear-gradient(135deg,#3b82f6,#1d4ed8); color:#fff;
-            font-size:16px; font-weight:600; cursor:pointer;
+            padding: 0 24px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            color: #fff;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.2s;
         }
-        .tips-text { text-align:center; margin-bottom:20px; font-size:15px; opacity:0.7; }
-        .players-grid {
-            display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
-            gap:24px; max-width:1200px; margin:0 auto; padding:0 20px;
+        #search-btn:hover {
+            background: linear-gradient(135deg, #1d4ed8, #2563eb);
         }
-        .player-card {
-            background:rgba(30,58,138,0.5); border:1px solid rgba(96,165,250,0.2);
-            border-radius:20px; overflow:hidden; backdrop-filter:blur(10px); transition:all 0.3s;
+        .tips-text {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 15px;
+            opacity: 0.7;
         }
-        .player-card:hover {
-            transform:translateY(-8px); border-color:rgba(96,165,250,0.6);
-            box-shadow:0 12px 40px rgba(59,130,246,0.2);
+        .player-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+            gap: 24px;
+            max-width: 1240px;
+            margin: 0 auto;
         }
-        .player-img-wrap { height:220px; overflow:hidden; }
-        .player-img { width:100%; height:100%; object-fit:cover; object-position:top; }
-        .player-info { padding:20px; }
-        .player-name { font-size:22px; font-weight:700; color:#fff; margin-bottom:6px; }
-        .player-club { font-size:15px; color:#60a5fa; margin-bottom:12px; }
-        .player-meta { display:flex; flex-wrap:wrap; gap:8px; }
-        .meta-tag {
-            background:rgba(96,165,250,0.15); border:1px solid rgba(96,165,250,0.2);
-            padding:4px 12px; border-radius:20px; font-size:13px; color:#bfdbfe;
+        .card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: 0.25s ease;
+            border: 1px solid rgba(147, 197, 253, 0.15);
         }
-        footer { text-align:center; padding:60px 20px 40px; color:#64748b; font-size:14px; }
-        footer .yz { font-size:20px; font-weight:700; color:#3b82f6; margin-bottom:8px; }
-        @media (max-width:768px) {
-            .hero h1 { font-size:32px; }
-            .search-box { flex-direction:column; }
-            #search-btn { width:100%; }
-            .players-grid { grid-template-columns:1fr; }
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+            border-color: #3b82f6;
+        }
+        .avatar-wrap {
+            height: 220px;
+            background: rgba(15, 23, 42, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .avatar-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .card-body {
+            padding: 18px;
+        }
+        .card-body h3 {
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+        .tag {
+            display: inline-block;
+            font-size: 13px;
+            padding: 3px 8px;
+            border-radius: 6px;
+            margin-right: 6px;
+            margin-bottom: 6px;
+        }
+        .team-tag { background: rgba(59, 130, 246, 0.25); }
+        .pos-tag { background: rgba(139, 92, 246, 0.25); }
+        .value-tag { background: rgba(16, 185, 129, 0.25); }
+        footer {
+            text-align: center;
+            margin-top: 70px;
+            opacity: 0.55;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
-    <div class="yz-badge">yz</div>
-    <div class="hero">
-        <h1>YZ 足球球员数据库</h1>
-        <p>搜索球员 · 查看资料与身价</p>
+    <div class="yz-badge">YZ</div>
+    <div class="header">
+        <h1>⚽ YZ 足球球员查询系统</h1>
+        <p>蓝色主题 · 联网实时搜索 · 本地球员兜底</p>
     </div>
-    <div class="search-wrapper">
-        <div class="search-box">
-            <input type="text" id="search-input" placeholder="输入球员中文名字搜索...">
-            <button id="search-btn">搜索</button>
-        </div>
+    <div class="search-box">
+        <input id="search-input" placeholder="输入球员名字：梅西、哈兰德、福登">
+        <button id="search-btn">搜索</button>
     </div>
-    <div class="tips-text" id="tip">清空输入框自动恢复全部球员</div>
-    <div class="players-grid" id="container"></div>
-    <footer>
-        <div class="yz">yz</div>
-        <p>足球球员数据中心 · 个人作品</p>
-    </footer>
+    <div class="tips-text" id="tip">输入名字自动搜索，清空输入框恢复全部球员</div>
+    <div class="player-grid" id="container"></div>
+    <footer>Powered by YZ | 足球数据演示项目</footer>
 
     <script>
         const container = document.getElementById("container");
         const input = document.getElementById("search-input");
         const btn = document.getElementById("search-btn");
         const tip = document.getElementById("tip");
+        let timer = null;
 
-        // 本地热门球员（都有图片）
-        const defaultPlayers = [
-            { name:"梅西", club:"迈阿密国际", league:"美职联", position:"前锋", age:37, value:"3500万欧", photo:"assets/messi.jpg" },
-            { name:"C罗", club:"利雅得胜利", league:"沙特联", position:"前锋", age:40, value:"1200万欧", photo:"assets/ronaldo.jpg" },
-            { name:"哈兰德", club:"曼城", league:"英超", position:"前锋", age:25, value:"1.8亿欧", photo:"assets/haaland.jpg" },
-            { name:"姆巴佩", club:"皇家马德里", league:"西甲", position:"前锋", age:26, value:"1.6亿欧", photo:"assets/mbappe.jpg" },
-            { name:"贝林厄姆", club:"皇家马德里", league:"西甲", position:"中场", age:21, value:"1.5亿欧", photo:"assets/bellingham.jpg" },
-            { name:"凯恩", club:"拜仁慕尼黑", league:"德甲", position:"前锋", age:31, value:"7500万欧", photo:"assets/kane.jpg" },
-            { name:"劳塔罗", club:"国际米兰", league:"意甲", position:"前锋", age:27, value:"8000万欧", photo:"assets/lautaro.jpg" }
+        // 本地兜底球员库
+        const localPlayers = [
+            {name:"梅西",team:"迈阿密国际",pos:"前锋",value:"3500万欧",img:"assets/messi.jpg"},
+            {name:"C罗",team:"利雅得胜利",pos:"前锋",value:"1200万欧",img:"assets/ronaldo.jpg"},
+            {name:"哈兰德",team:"曼城",pos:"前锋",value:"1.8亿欧",img:"assets/haaland.jpg"},
+            {name:"姆巴佩",team:"皇家马德里",pos:"前锋",value:"1.6亿欧",img:"assets/mbappe.jpg"},
+            {name:"贝林厄姆",team:"皇家马德里",pos:"中场",value:"1.5亿欧",img:"assets/bellingham.jpg"},
+            {name:"福登",team:"曼城",pos:"中场",value:"9000万欧",img:"assets/foden.jpg"},
+            {name:"维尼修斯",team:"皇家马德里",pos:"前锋",value:"1.4亿欧",img:"assets/vinicius.jpg"}
         ];
 
-        function renderLocal(list) {
+        // 渲染球员卡片
+        function render(list) {
+            container.innerHTML = "";
             if (list.length === 0) {
-                container.innerHTML = `<p style="text-align:center;width:100%;opacity:0.7;font-size:18px;">没有找到该球员</p>`;
+                container.innerHTML = `<p style="text-align:center;width:100%;opacity:0.7;">没有找到该球员</p>`;
                 return;
             }
-            container.innerHTML = list.map(p => `
-                <div class="player-card">
-                    <div class="player-img-wrap">
-                        <img class="player-img" src="${p.photo}" alt="${p.name}" onerror="this.parentElement.innerHTML='<div style=&quot;height:100%;display:flex;align-items:center;justify-content:center;font-size:48px;&quot;>⚽</div>'">
+            list.forEach(p => {
+                const avatar = p.img || p.photo || "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Soccer_ball.svg/220px-Soccer_ball.svg.png";
+                const name = p.name || p.name_zh || p.strPlayer;
+                const team = p.team || p.strTeam || "未知球队";
+                const pos = p.pos || p.strPosition || "未知位置";
+                const value = p.value || "";
+                container.innerHTML += `
+                <div class="card">
+                    <div class="avatar-wrap">
+                        <img src="${avatar}" alt="${name}" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Soccer_ball.svg/220px-Soccer_ball.svg.png'">
                     </div>
-                    <div class="player-info">
-                        <div class="player-name">${p.name}</div>
-                        <div class="player-club">${p.club} · ${p.league}</div>
-                        <div class="player-meta">
-                            <span class="meta-tag">${p.position}</span>
-                            <span class="meta-tag">${p.age}岁</span>
-                            <span class="meta-tag">身价 ${p.value}</span>
-                        </div>
+                    <div class="card-body">
+                        <h3>${name}</h3>
+                        <span class="tag team-tag">${team}</span>
+                        <span class="tag pos-tag">${pos}</span>
+                        ${value ? `<span class="tag value-tag">💰${value}</span>` : ''}
                     </div>
-                </div>
-            `).join("");
+                </div>`;
+            });
         }
 
-        // 联网搜索（球小策API，通过Netlify代理）
+        // 联网搜索
         async function searchOnline(name) {
-            tip.innerText = "🔍 联网搜索中...";
             try {
+                tip.innerText = "🔍 正在联网查询...";
                 const res = await fetch(`/.netlify/functions/proxy-football?q=${encodeURIComponent(name)}`);
                 const data = await res.json();
-                if (data.success && data.data && data.data.length > 0) {
+                if (data && data.data && data.data.length > 0) {
                     tip.innerText = `✅ 联网找到 ${data.data.length} 位球员`;
-                    container.innerHTML = data.data.map(p => `
-                        <div class="player-card">
-                            <div class="player-img-wrap">
-                                <img class="player-img" src="${p.photo || ''}" alt="${p.name_zh || p.name}" onerror="this.parentElement.innerHTML='<div style=&quot;height:100%;display:flex;align-items:center;justify-content:center;font-size:48px;&quot;>⚽</div>'">
-                            </div>
-                            <div class="player-info">
-                                <div class="player-name">${p.name_zh || p.name}</div>
-                                <div class="player-club">${p.nationality || '未知国籍'}</div>
-                                <div class="player-meta">
-                                    <span class="meta-tag">${p.age ? p.age + '岁' : ''}</span>
-                                </div>
-                            </div>
-                        </div>
-                    `).join("");
+                    render(data.data);
                 } else {
-                    tip.innerText = "❌ 没有搜到该球员";
-                    container.innerHTML = "";
+                    tip.innerText = "❌ 未联网找到匹配球员";
+                    render([]);
                 }
             } catch (err) {
-                tip.innerText = "⚠️ 联网搜索暂不可用，目前支持搜索本地热门球员";
-                console.error(err);
+                tip.innerText = "⚠️ 联网失败，展示本地球员";
+                // 联网失败就显示本地匹配结果
+                const localResult = localPlayers.filter(item => item.name.includes(name));
+                render(localResult);
             }
         }
 
+        // 主搜索逻辑
         function doSearch() {
             const kw = input.value.trim();
             if (!kw) {
-                tip.innerText = "清空输入框自动恢复全部球员";
-                renderLocal(defaultPlayers);
+                render(localPlayers);
+                tip.innerText = "输入名字自动搜索，清空输入框恢复全部球员";
                 return;
             }
-            // 先本地匹配
-            const localResult = defaultPlayers.filter(p => 
-                p.name.toLowerCase().includes(kw.toLowerCase())
-            );
+            // 先匹配本地
+            const localResult = localPlayers.filter(item => item.name.includes(kw));
             if (localResult.length > 0) {
-                tip.innerText = `本地找到 ${localResult.length} 位球员`;
-                renderLocal(localResult);
+                render(localResult);
+                tip.innerText = `📌 本地找到 ${localResult.length} 位球员`;
             } else {
-                // 本地没有 → 走联网！
+                // 本地没有再联网
                 searchOnline(kw);
             }
         }
 
-        btn.onclick = doSearch;
-        input.onkeydown = (e) => { if (e.key === "Enter") doSearch(); };
-        input.oninput = () => {
-            if (input.value.trim() === "") {
-                tip.innerText = "清空输入框自动恢复全部球员";
-                renderLocal(defaultPlayers);
-            }
-        };
+        // 防抖：输入停止300毫秒后再搜索
+        input.addEventListener("input", () => {
+            clearTimeout(timer);
+            timer = setTimeout(() => {
+                doSearch();
+                input.focus(); // 始终保持输入框焦点，解决删不了字的问题
+            }, 300);
+        });
 
-        // 默认显示全部球员
-        renderLocal(defaultPlayers);
+        // 回车搜索
+        input.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                clearTimeout(timer);
+                doSearch();
+                input.focus();
+            }
+        });
+
+        // 点击按钮搜索
+        btn.addEventListener("click", () => {
+            clearTimeout(timer);
+            doSearch();
+            input.focus(); // 点完搜索也保持焦点
+        });
+
+        // 页面加载默认显示本地球员
+        render(localPlayers);
+        // 页面打开自动聚焦输入框
+        input.focus();
     </script>
 </body>
 </html>
