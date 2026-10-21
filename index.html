@@ -158,20 +158,20 @@
         const input = document.getElementById("search-input");
         const btn = document.getElementById("search-btn");
 
-        // 这里：头像路径 assets/xxx.jpg  对应你上传到github的图片
+        // 全部使用在线维基头像，不用上传图片！
         const playerList = [
-            {name:"哈兰德",team:"曼城",pos:"前锋",value:"1.8亿欧",img:"assets/haaland.jpg"},
-            {name:"姆巴佩",team:"皇家马德里",pos:"前锋",value:"1.6亿欧",img:"assets/mbappe.jpg"},
-            {name:"梅西",team:"迈阿密国际",pos:"前锋",value:"3500万欧",img:"assets/messi.jpg"},
-            {name:"C罗",team:"利雅得胜利",pos:"前锋",value:"1200万欧",img:"assets/c罗.jpg"},
-            {name:"贝林厄姆",team:"皇家马德里",pos:"中场",value:"1.5亿欧",img:"assets/bellingham.jpg"},
-            {name:"维尼修斯",team:"皇家马德里",pos:"前锋",value:"1.4亿欧",img:"assets/vinicius.jpg"},
-            {name:"德布劳内",team:"曼城",pos:"中场",value:"7000万欧",img:"assets/debruyne.jpg"},
-            {name:"萨拉赫",team:"利物浦",pos:"前锋",value:"6500万欧",img:"assets/salah.jpg"},
-            {name:"凯恩",team:"拜仁慕尼黑",pos:"前锋",value:"7000万欧",img:"assets/kane.jpg"},
-            {name:"赖斯",team:"阿森纳",pos:"中场",value:"9000万欧",img:"assets/rice.jpg"},
-            {name:"萨卡",team:"阿森纳",pos:"前锋",value:"1.1亿欧",img:"assets/saka.jpg"},
-            {name:"帕尔默",team:"切尔西",pos:"中场",value:"9500万欧",img:"assets/palmer.jpg"}
+            {name:"哈兰德",team:"曼城",pos:"前锋",value:"1.8亿欧",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Erling_Haaland_2023.jpg/400px-Erling_Haaland_2023.jpg"},
+            {name:"姆巴佩",team:"皇家马德里",pos:"前锋",value:"1.6亿欧",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Kylian_Mbapp%C3%A9_2022.jpg/400px-Kylian_Mbapp%C3%A9_2022.jpg"},
+            {name:"梅西",team:"迈阿密国际",pos:"前锋",value:"3500万欧",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Lionel_Messi_2023.jpg/400px-Lionel_Messi_2023.jpg"},
+            {name:"C罗",team:"利雅得胜利",pos:"前锋",value:"1200万欧",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Cristiano_Ronaldo_2018.jpg/400px-Cristiano_Ronaldo_2018.jpg"},
+            {name:"贝林厄姆",team:"皇家马德里",pos:"中场",value:"1.5亿欧",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Jude_Bellingham_2023.jpg/400px-Jude_Bellingham_2023.jpg"},
+            {name:"维尼修斯",team:"皇家马德里",pos:"前锋",value:"1.4亿欧",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Vin%C3%ADcius_J%C3%BAnior_2023.jpg/400px-Vin%C3%ADcius_J%C3%BAnior_2023.jpg"},
+            {name:"德布劳内",team:"曼城",pos:"中场",value:"7000万欧",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Kevin_De_Bruyne_2023.jpg/400px-Kevin_De_Bruyne_2023.jpg"},
+            {name:"萨拉赫",team:"利物浦",pos:"前锋",value:"6500万欧",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Mohamed_Salah_2023.jpg/400px-Mohamed_Salah_2023.jpg"},
+            {name:"凯恩",team:"拜仁慕尼黑",pos:"前锋",value:"7000万欧",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Harry_Kane_2023.jpg/400px-Harry_Kane_2023.jpg"},
+            {name:"赖斯",team:"阿森纳",pos:"中场",value:"9000万欧",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Declan_Rice_2022.jpg/400px-Declan_Rice_2022.jpg"},
+            {name:"萨卡",team:"阿森纳",pos:"前锋",value:"1.1亿欧",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Bukayo_Saka_2022.jpg/400px-Bukayo_Saka_2022.jpg"},
+            {name:"帕尔默",team:"切尔西",pos:"中场",value:"9500万欧",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Cole_Palmer_2023.jpg/400px-Cole_Palmer_2023.jpg"}
         ]
 
         function render(list){
