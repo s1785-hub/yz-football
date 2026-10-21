@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YZ足球球员数据库</title>
+    <title>YZ 足球球员查询系统</title>
     <style>
         * {
-            margin:0;
-            padding:0;
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
             font-family: system-ui, -apple-system, sans-serif;
         }
@@ -18,125 +18,126 @@
         }
         .yz-badge {
             position: fixed;
-            top:18px;
-            right:18px;
-            background:#22c55e;
-            color:#000;
-            font-weight:800;
-            padding:7px 14px;
-            border-radius:999px;
+            top: 18px;
+            right: 18px;
+            background: #22c55e;
+            color: #000;
+            font-weight: 800;
+            padding: 7px 14px;
+            border-radius: 999px;
             box-shadow: 0 0 14px rgba(34, 197, 94, 0.5);
             z-index: 99;
         }
         .header {
-            text-align:center;
-            margin-bottom:36px;
+            text-align: center;
+            margin-bottom: 36px;
         }
-        .header h1{
-            font-size:34px;
-            background: linear-gradient(90deg,#22c55e,#86efac);
-            -webkit-background-clip:text;
-            color:transparent;
-            margin-bottom:8px;
+        .header h1 {
+            font-size: 34px;
+            background: linear-gradient(90deg, #22c55e, #86efac);
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 8px;
         }
-        .header p{
-            opacity:0.7;
-            font-size:16px;
+        .header p {
+            opacity: 0.7;
+            font-size: 16px;
         }
         .search-box {
-            max-width:620px;
-            margin:0 auto 40px;
-            display:flex;
-            gap:10px;
+            max-width: 620px;
+            margin: 0 auto 20px;
+            display: flex;
+            gap: 10px;
         }
         #search-input {
-            flex:1;
-            padding:14px 18px;
-            border-radius:12px;
-            border:none;
-            font-size:17px;
-            background:#1e293b;
-            color:#fff;
-            outline:none;
+            flex: 1;
+            padding: 14px 18px;
+            border-radius: 12px;
+            border: none;
+            font-size: 17px;
+            background: #1e293b;
+            color: #fff;
+            outline: none;
         }
-        #search-input:focus{
-            box-shadow:0 0 0 2px #22c55e;
+        #search-input:focus {
+            box-shadow: 0 0 0 2px #22c55e;
         }
         #search-btn {
-            padding:0 24px;
-            border:none;
-            border-radius:12px;
-            background:#22c55e;
-            color:#000;
-            font-weight:bold;
-            font-size:16px;
-            cursor:pointer;
-            transition:0.2s;
+            padding: 0 24px;
+            border: none;
+            border-radius: 12px;
+            background: #22c55e;
+            color: #000;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.2s;
         }
-        #search-btn:hover{
-            background:#16a34a;
+        #search-btn:hover {
+            background: #16a34a;
+        }
+        .tips-text {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 15px;
+            opacity: 0.7;
         }
         .player-grid {
-            display:grid;
-            grid-template-columns: repeat(auto-fill, minmax(270px,1fr));
-            gap:24px;
-            max-width:1240px;
-            margin:0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+            gap: 24px;
+            max-width: 1240px;
+            margin: 0 auto;
         }
         .card {
-            background:#1e293b;
-            border-radius:16px;
-            overflow:hidden;
+            background: #1e293b;
+            border-radius: 16px;
+            overflow: hidden;
             transition: 0.25s ease;
-            border:1px solid #334155;
+            border: 1px solid #334155;
+            cursor: pointer;
         }
         .card:hover {
             transform: translateY(-8px);
-            box-shadow: 0 12px 28px rgba(0,0,0,0.35);
-            border-color:#22c55e;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+            border-color: #22c55e;
         }
-        .avatar-wrap{
-            height:220px;
-            background:#0f172a;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            overflow:hidden;
+        .avatar-wrap {
+            height: 200px;
+            background: #0f172a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
         }
-        .avatar-wrap img{
-            width:100%;
-            height:100%;
-            object-fit:cover;
+        .avatar-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         .card-body {
-            padding:18px;
+            padding: 18px;
         }
-        .card-body h3{
-            font-size:22px;
-            margin-bottom:10px;
+        .card-body h3 {
+            font-size: 22px;
+            margin-bottom: 10px;
         }
-        .tag{
-            display:inline-block;
-            font-size:13px;
-            padding:3px 8px;
-            border-radius:6px;
-            margin-right:6px;
-            margin-bottom:6px;
+        .tag {
+            display: inline-block;
+            font-size: 13px;
+            padding: 3px 8px;
+            border-radius: 6px;
+            margin-right: 6px;
+            margin-bottom: 6px;
         }
-        .team-tag{
-            background:#334155;
-        }
-        .pos-tag{
-            background:#1e40af;
-        }
-        .value-tag{
-            background:#15803d;
-        }
+        .team-tag { background: #334155; }
+        .pos-tag { background: #1e40af; }
+        .value-tag { background: #15803d; }
         footer {
-            text-align:center;
-            margin-top:70px;
-            opacity:0.55;
-            font-size:14px;
+            text-align: center;
+            margin-top: 70px;
+            opacity: 0.55;
+            font-size: 14px;
         }
     </style>
 </head>
@@ -144,12 +145,13 @@
     <div class="yz-badge">YZ</div>
     <div class="header">
         <h1>⚽ YZ 足球球员查询系统</h1>
-        <p>搜索球员 · 查看资料与身价</p>
+        <p>中文搜索球员 · 实时数据查询</p>
     </div>
     <div class="search-box">
-        <input id="search-input" placeholder="输入球员名字：哈兰德、梅西、贝林厄姆">
+        <input id="search-input" placeholder="输入球员中文名字，如：哈兰德、梅西、姆巴佩">
         <button id="search-btn">搜索</button>
     </div>
+    <div class="tips-text" id="tip">输入中文球员名字搜索，清空输入框自动清空结果</div>
     <div class="player-grid" id="container"></div>
     <footer>Powered by YZ | 足球数据演示项目</footer>
 
@@ -157,57 +159,63 @@
         const container = document.getElementById("container");
         const input = document.getElementById("search-input");
         const btn = document.getElementById("search-btn");
+        const tip = document.getElementById("tip");
 
-        // 全部使用在线维基头像，不用上传图片！
-        const playerList = [
-            {name:"哈兰德",team:"曼城",pos:"前锋",value:"1.8亿欧",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Erling_Haaland_2023.jpg/400px-Erling_Haaland_2023.jpg"},
-            {name:"姆巴佩",team:"皇家马德里",pos:"前锋",value:"1.6亿欧",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Kylian_Mbapp%C3%A9_2022.jpg/400px-Kylian_Mbapp%C3%A9_2022.jpg"},
-            {name:"梅西",team:"迈阿密国际",pos:"前锋",value:"3500万欧",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Lionel_Messi_2023.jpg/400px-Lionel_Messi_2023.jpg"},
-            {name:"C罗",team:"利雅得胜利",pos:"前锋",value:"1200万欧",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Cristiano_Ronaldo_2018.jpg/400px-Cristiano_Ronaldo_2018.jpg"},
-            {name:"贝林厄姆",team:"皇家马德里",pos:"中场",value:"1.5亿欧",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Jude_Bellingham_2023.jpg/400px-Jude_Bellingham_2023.jpg"},
-            {name:"维尼修斯",team:"皇家马德里",pos:"前锋",value:"1.4亿欧",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Vin%C3%ADcius_J%C3%BAnior_2023.jpg/400px-Vin%C3%ADcius_J%C3%BAnior_2023.jpg"},
-            {name:"德布劳内",team:"曼城",pos:"中场",value:"7000万欧",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Kevin_De_Bruyne_2023.jpg/400px-Kevin_De_Bruyne_2023.jpg"},
-            {name:"萨拉赫",team:"利物浦",pos:"前锋",value:"6500万欧",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Mohamed_Salah_2023.jpg/400px-Mohamed_Salah_2023.jpg"},
-            {name:"凯恩",team:"拜仁慕尼黑",pos:"前锋",value:"7000万欧",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Harry_Kane_2023.jpg/400px-Harry_Kane_2023.jpg"},
-            {name:"赖斯",team:"阿森纳",pos:"中场",value:"9000万欧",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Declan_Rice_2022.jpg/400px-Declan_Rice_2022.jpg"},
-            {name:"萨卡",team:"阿森纳",pos:"前锋",value:"1.1亿欧",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Bukayo_Saka_2022.jpg/400px-Bukayo_Saka_2022.jpg"},
-            {name:"帕尔默",team:"切尔西",pos:"中场",value:"9500万欧",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Cole_Palmer_2023.jpg/400px-Cole_Palmer_2023.jpg"}
-        ]
-
-        function render(list){
-            container.innerHTML = "";
-            if(list.length === 0){
-                container.innerHTML = `<p style="text-align:center;width:100%;opacity:0.7;font-size:18px;">没有找到该球员</p>`
+        // 调用我们自己的Netlify代理函数
+        async function searchPlayer(name) {
+            if (!name.trim()) {
+                container.innerHTML = "";
+                tip.innerText = "输入中文球员名字搜索，清空输入框自动清空结果";
                 return;
             }
-            list.forEach(p=>{
-                container.innerHTML += `
+            tip.innerText = "🔍 正在联网查询，请稍等...";
+            container.innerHTML = "";
+            try {
+                // 关键：走我们自己的代理函数，不是直接请求球小策
+                const res = await fetch(`/.netlify/functions/proxy-football?q=${encodeURIComponent(name)}`);
+                const data = await res.json();
+
+                if (data.success && data.data && data.data.length > 0) {
+                    tip.innerText = `✅ 一共找到 ${data.data.length} 位球员`;
+                    renderList(data.data);
+                } else {
+                    tip.innerText = "❌ 没有搜到该球员，换个名字试试";
+                }
+            } catch (err) {
+                tip.innerText = "⚠️ 代理函数未部署或网络异常，请检查netlify/functions/proxy-football.js是否已上传";
+                console.error(err);
+            }
+        }
+
+        function renderList(list) {
+            let html = "";
+            list.forEach(p => {
+                const avatar = p.photo || "https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Soccer_ball.svg/220px-Soccer_ball.svg.png";
+                html += `
                 <div class="card">
                     <div class="avatar-wrap">
-                        <img src="${p.img}" alt="${p.name}" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Soccer_ball.svg/220px-Soccer_ball.svg.png'">
+                        <img src="${avatar}" alt="${p.name_zh || p.name}" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Soccer_ball.svg/220px-Soccer_ball.svg.png'">
                     </div>
                     <div class="card-body">
-                        <h3>${p.name}</h3>
-                        <span class="tag team-tag">${p.team}</span>
-                        <span class="tag pos-tag">${p.pos}</span>
-                        <span class="tag value-tag">💰${p.value}</span>
+                        <h3>${p.name_zh || p.name}</h3>
+                        <span class="tag team-tag">${p.nationality || '未知国籍'}</span>
+                        <span class="tag pos-tag">${p.age ? p.age + '岁' : ''}</span>
                     </div>
-                </div>`
+                </div>`;
             })
+            container.innerHTML = html;
         }
-        render(playerList);
 
-        function searchPlayer(){
-            const kw = input.value.trim().toLowerCase();
-            if(!kw){
-                render(playerList);
-                return;
+        btn.onclick = () => searchPlayer(input.value.trim());
+        input.onkeydown = (e) => {
+            if (e.key === "Enter") searchPlayer(input.value.trim());
+        };
+        input.oninput = () => {
+            if (input.value.trim() === "") {
+                container.innerHTML = "";
+                tip.innerText = "输入中文球员名字搜索，清空输入框自动清空结果";
             }
-            const result = playerList.filter(item=> item.name.toLowerCase().includes(kw))
-            render(result);
         }
-        btn.onclick = searchPlayer;
-        input.onkeydown = (e)=>e.key === "Enter" && searchPlayer();
     </script>
 </body>
 </html>
